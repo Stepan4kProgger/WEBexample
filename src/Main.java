@@ -25,7 +25,7 @@ public class Main {
     private static void useUDP(Scanner scanner) throws IOException {
         try (DatagramSocket socket = new DatagramSocket()) {
             while (true) {
-                System.out.println("Выберите действие:\n" +
+                System.out.println("Выберите действие пожалуйста спасибо:\n" +
                         "1 - Отправить параметры для уравнения\n" +
                         "0 - Завершить работу");
                 switch (scanner.next()) {
