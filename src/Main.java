@@ -19,7 +19,7 @@ public class Main {
     private static final int PORT = 8001;
 
     private static void useTCP(Scanner scanner) {
-
+        //тело клиента на TCP
     }
 
     private static void useUDP(Scanner scanner) throws IOException {
