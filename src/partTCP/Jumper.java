@@ -1,5 +1,7 @@
 package partTCP;
 
+import static java.lang.Integer.parseInt;
+
 public class Jumper {
     private String name;
     private int id;
@@ -28,20 +30,15 @@ public class Jumper {
     public void setJumpLength(double jumpLength) {
         this.jumpLength = jumpLength;
     }
-    public Jumper(String name, int id, double jumpLength){
-        this.name = name;
-        this.id = id;
-        this.jumpLength = jumpLength;
-    }
 
     public Jumper(String dat){
         String[] line = dat.split("\t");
         name = line[0];
-        id = Integer.getInteger(line[1]);
-        jumpLength = Integer.getInteger(line[2]);
+        id = parseInt(line[1]);
+        jumpLength = 0;
     }
 
     public String toString(){
-        return name + '\t' + id + '\t' + jumpLength;
+        return name + '\t' + jumpLength;
     }
 }

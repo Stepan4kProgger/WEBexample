@@ -1,9 +1,7 @@
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
-import partTCP.Jumper;
 
 public class Main {
     private static final InetAddress HOST;
@@ -18,8 +16,52 @@ public class Main {
 
     private static final int PORT = 8001;
 
-    private static void useTCP(Scanner scanner) {
-        //тело клиента на TCP
+    private static void send(String str, ObjectOutputStream obj) throws IOException {
+        obj.writeObject(str);
+    }
+
+    private static String recv(ObjectInputStream obj) throws IOException, ClassNotFoundException {
+        return (String) obj.readObject();
+    }
+
+    private static void useTCP(Scanner scanner) throws Exception {
+        try (Socket socket = new Socket(HOST, PORT)) {
+            var output = new ObjectOutputStream(socket.getOutputStream());
+            var input = new ObjectInputStream(socket.getInputStream());
+            while (true) {
+                System.out.println("Доступные команды:\n" +
+                        "/s - прекратить работу\n" +
+                        "/input - ввести длину прыжка спортсмена (следуйте инструкциям после вызова)\n" +
+                        "/winners - отобразить тройку лидеров\n");
+                String msg = scanner.next();
+                send(msg, output);
+                if (msg.equals("/s"))
+                    break;
+                else if (msg.equals("/input")){
+                    System.out.println("Введите " + recv(input) + ":");
+                    send(scanner.next(), output);
+                    msg = recv(input);
+                    if (msg.equals("~e")) {
+                        System.out.println("Возникла ошибка.");
+                        continue;
+                    }
+                    System.out.println("Введите " + msg + ":");
+                    send(scanner.next(), output);
+                    msg = recv(input);
+                    if (msg.equals("~e")) {
+                        System.out.println("Возникла ошибка.");
+                        continue;
+                    }
+                    System.out.println("Успешно");
+                } else if (msg.equals("/winners")) {
+                    msg = recv(input);
+                    if (msg.isEmpty())
+                        System.out.println("Команда не вернула ответ");
+                    else
+                        System.out.println("Место\tИмя\tДлина прыжка\n" + msg);
+                }
+            }
+        }
     }
 
     private static void useUDP(Scanner scanner) throws IOException {
@@ -53,7 +95,7 @@ public class Main {
                         String res = new String(received.getData()).trim();
                         System.out.println("Ответ: " + res);
                         try (FileWriter file = new FileWriter("src\\Solutions.txt", true)) {
-                            file.append("x=" + x+ "; y=" + y + "; z=" + z + "; Result: " + res + "\n");
+                            file.append("x=" + x + "; y=" + y + "; z=" + z + "; Result: " + res + "\n");
                         }
                         break;
                     }
@@ -65,7 +107,7 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         System.out.println("1 - TCP part\n2 - UDP part\nEnter num of part");
         if (scanner.next().equals("1")) useTCP(scanner);
