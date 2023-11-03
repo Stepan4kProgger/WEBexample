@@ -14,7 +14,9 @@ public class Main {
         }
     }
 
-    private static final int PORT = 8001;
+
+    private static final int PORTTCP = 7999;
+    private static final int PORTUDP = 8001;
 
     private static void send(String str, ObjectOutputStream obj) throws IOException {
         obj.writeObject(str);
@@ -25,7 +27,7 @@ public class Main {
     }
 
     private static void useTCP(Scanner scanner) throws Exception {
-        try (Socket socket = new Socket(HOST, PORT)) {
+        try (Socket socket = new Socket(HOST, PORTTCP)) {
             var output = new ObjectOutputStream(socket.getOutputStream());
             var input = new ObjectInputStream(socket.getInputStream());
             while (true) {
@@ -87,10 +89,10 @@ public class Main {
                         else break;
                         String line = "" + x + ' ' + y + ' ' + z;
                         byte[] params = line.getBytes(StandardCharsets.UTF_8);
-                        DatagramPacket packet = new DatagramPacket(params, params.length, HOST, PORT);
+                        DatagramPacket packet = new DatagramPacket(params, params.length, HOST, PORTUDP);
                         socket.send(packet);
                         byte[] buf = new byte[128];
-                        DatagramPacket received = new DatagramPacket(buf, buf.length, HOST, PORT);
+                        DatagramPacket received = new DatagramPacket(buf, buf.length, HOST, PORTUDP);
                         socket.receive(received);
                         String res = new String(received.getData()).trim();
                         System.out.println("Ответ: " + res);

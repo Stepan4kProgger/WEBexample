@@ -15,7 +15,7 @@ public class Jumper {
         return id;
     }
 
-    public double getJumpLength() {
+    public Double getJumpLength() {
         return jumpLength;
     }
 
